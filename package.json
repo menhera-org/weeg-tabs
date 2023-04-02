@@ -20,8 +20,13 @@
   },
   "homepage": "https://github.com/menhera-org/weeg-tabse#readme",
   "devDependencies": {
+    "@types/webextension-polyfill": "^0.10.0",
     "typescript": "^5.0.3"
   },
   "type": "module",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "webextension-polyfill": "^0.10.0",
+    "weeg-utils": "^0.2.0"
+  }
 }
