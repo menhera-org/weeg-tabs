@@ -27,6 +27,8 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "webextension-polyfill": "^0.10.0",
+    "weeg-containers": "^0.1.0",
+    "weeg-serializer": "^0.1.0",
     "weeg-utils": "^0.2.0"
   }
 }
