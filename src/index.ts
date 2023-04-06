@@ -16,3 +16,6 @@
   limitations under the License.
   @license
 */
+
+export { CompatTab } from "./CompatTab.js";
+export { TabAttributeProvider } from "./TabAttributeProvider.js";
