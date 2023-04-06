@@ -17,14 +17,24 @@
   @license
 */
 
-export { CompatTab } from "./CompatTab.js";
-export { TabAttributeProvider } from "./TabAttributeProvider.js";
+import browser from "webextension-polyfill";
+import { CompatTab } from "./CompatTab";
+import { TabGroupFilter } from "./TabGroupFilter";
 
-export { StandardTabSorter } from "./StandardTabSorter.js";
+export class CookieStoreTabGroupFilter implements TabGroupFilter {
+  public readonly cookieStoreId: string;
 
-export { CompatTabGroup } from "./CompatTabGroup.js";
-export { TabGroupFilter } from "./TabGroupFilter.js";
-export { AllTabGroupFilter } from "./AllTabGroupFilter.js";
-export { CookieStoreTabGroupFilter } from "./CookieStoreTabGroupFilter.js";
-export { DomainTabGroupFilter } from "./DomainTabGroupFilter.js";
-export { WindowTabGroupFilter } from "./WindowTabGroupFilter.js";
+  public constructor(cookieStoreId: string) {
+    this.cookieStoreId = cookieStoreId;
+  }
+
+  public async getTabs(): Promise<CompatTab[]> {
+    return (await browser.tabs.query({
+      cookieStoreId: this.cookieStoreId,
+    })).map(tab => new CompatTab(tab));
+  }
+
+  public async filterTabs(tabs: CompatTab[]): Promise<CompatTab[]> {
+    return tabs.filter((tab) => tab.cookieStore.id == this.cookieStoreId);
+  }
+}

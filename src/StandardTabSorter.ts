@@ -17,14 +17,16 @@
   @license
 */
 
-export { CompatTab } from "./CompatTab.js";
-export { TabAttributeProvider } from "./TabAttributeProvider.js";
+import { CompatTab } from "./CompatTab";
 
-export { StandardTabSorter } from "./StandardTabSorter.js";
-
-export { CompatTabGroup } from "./CompatTabGroup.js";
-export { TabGroupFilter } from "./TabGroupFilter.js";
-export { AllTabGroupFilter } from "./AllTabGroupFilter.js";
-export { CookieStoreTabGroupFilter } from "./CookieStoreTabGroupFilter.js";
-export { DomainTabGroupFilter } from "./DomainTabGroupFilter.js";
-export { WindowTabGroupFilter } from "./WindowTabGroupFilter.js";
+export class StandardTabSorter {
+  public sortTabs(tabs: Iterable<CompatTab>): CompatTab[] {
+    return Array.from(tabs).sort((a, b) => {
+      const windowIdDiff = a.windowId - b.windowId;
+      if (windowIdDiff != 0) {
+        return windowIdDiff;
+      }
+      return a.index - b.index;
+    });
+  }
+}

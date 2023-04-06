@@ -20,8 +20,15 @@
 import browser from 'webextension-polyfill';
 import { structuredDeserialize, structuredSerialize } from 'weeg-serializer';
 import { CookieStore } from "weeg-containers";
+import { EventSink } from 'weeg-events';
+import { RegistrableDomainService } from 'weeg-domains';
+
+const registrableDomainService = RegistrableDomainService.getInstance<RegistrableDomainService>();
 
 export class CompatTab {
+  public static readonly onCreated = new EventSink<CompatTab>();
+  public static readonly onClosed = new EventSink<number>();
+
   public readonly id: number;
   public readonly url: string;
   public readonly title: string;
@@ -140,4 +147,16 @@ export class CompatTab {
     }
     await browser.sessions.removeTabValue(this.id, key);
   }
+
+  public async getRegistrableDomain(): Promise<string> {
+    return registrableDomainService.getRegistrableDomain(this.url);
+  }
 }
+
+browser.tabs.onCreated.addListener((browserTab) => {
+  CompatTab.onCreated.dispatch(new CompatTab(browserTab));
+});
+
+browser.tabs.onRemoved.addListener((tabId) => {
+  CompatTab.onClosed.dispatch(tabId);
+});

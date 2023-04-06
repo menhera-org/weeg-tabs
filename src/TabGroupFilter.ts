@@ -17,14 +17,10 @@
   @license
 */
 
-export { CompatTab } from "./CompatTab.js";
-export { TabAttributeProvider } from "./TabAttributeProvider.js";
+import { CompatTab } from "./CompatTab";
 
-export { StandardTabSorter } from "./StandardTabSorter.js";
+export interface TabGroupFilter {
+  getTabs(): Promise<CompatTab[]>;
 
-export { CompatTabGroup } from "./CompatTabGroup.js";
-export { TabGroupFilter } from "./TabGroupFilter.js";
-export { AllTabGroupFilter } from "./AllTabGroupFilter.js";
-export { CookieStoreTabGroupFilter } from "./CookieStoreTabGroupFilter.js";
-export { DomainTabGroupFilter } from "./DomainTabGroupFilter.js";
-export { WindowTabGroupFilter } from "./WindowTabGroupFilter.js";
+  filterTabs(tabs: CompatTab[]): Promise<CompatTab[]>;
+}

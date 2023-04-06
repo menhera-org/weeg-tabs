@@ -17,14 +17,24 @@
   @license
 */
 
-export { CompatTab } from "./CompatTab.js";
-export { TabAttributeProvider } from "./TabAttributeProvider.js";
+import { TabGroupFilter } from "./TabGroupFilter";
+import { AllTabGroupFilter } from "./AllTabGroupFilter";
+import { CompatTab } from "./CompatTab";
 
-export { StandardTabSorter } from "./StandardTabSorter.js";
+export class CompatTabGroup {
+  public readonly filters: readonly TabGroupFilter[];
 
-export { CompatTabGroup } from "./CompatTabGroup.js";
-export { TabGroupFilter } from "./TabGroupFilter.js";
-export { AllTabGroupFilter } from "./AllTabGroupFilter.js";
-export { CookieStoreTabGroupFilter } from "./CookieStoreTabGroupFilter.js";
-export { DomainTabGroupFilter } from "./DomainTabGroupFilter.js";
-export { WindowTabGroupFilter } from "./WindowTabGroupFilter.js";
+  public constructor(... filters: TabGroupFilter[]) {
+    this.filters = [... filters];
+  }
+
+  public async getTabs(): Promise<CompatTab[]> {
+    const filters = [... this.filters];
+    const firstFilter = filters.shift() ?? new AllTabGroupFilter();
+    let tabs = await firstFilter.getTabs();
+    for (const filter of filters) {
+      tabs = await filter.filterTabs(tabs);
+    }
+    return tabs;
+  }
+}
