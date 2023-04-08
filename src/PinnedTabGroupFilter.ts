@@ -17,15 +17,24 @@
   @license
 */
 
-export { CompatTab } from "./CompatTab.js";
-export { TabAttributeProvider } from "./TabAttributeProvider.js";
+import browser from "webextension-polyfill";
+import { CompatTab } from "./CompatTab";
+import { TabGroupFilter } from "./TabGroupFilter";
 
-export { StandardTabSorter } from "./StandardTabSorter.js";
+export class PinnedTabGroupFilter implements TabGroupFilter {
+  public readonly pinned: boolean;
 
-export { CompatTabGroup } from "./CompatTabGroup.js";
-export { TabGroupFilter } from "./TabGroupFilter.js";
-export { AllTabGroupFilter } from "./AllTabGroupFilter.js";
-export { CookieStoreTabGroupFilter } from "./CookieStoreTabGroupFilter.js";
-export { DomainTabGroupFilter } from "./DomainTabGroupFilter.js";
-export { WindowTabGroupFilter } from "./WindowTabGroupFilter.js";
-export { PinnedTabGroupFilter } from "./PinnedTabGroupFilter.js";
+  public constructor(pinned: boolean) {
+    this.pinned = pinned;
+  }
+
+  public async getTabs(): Promise<CompatTab[]> {
+    return (await browser.tabs.query({
+      pinned: this.pinned,
+    })).map(tab => new CompatTab(tab));
+  }
+
+  public async filterTabs(tabs: CompatTab[]): Promise<CompatTab[]> {
+    return tabs.filter((tab) => tab.pinned == this.pinned);
+  }
+}
