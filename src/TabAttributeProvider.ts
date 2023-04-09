@@ -24,7 +24,7 @@ export class TabAttributeProvider implements ExtensibleAttributeProvider<CompatT
   public async getAttributeSets(tabs: Iterable<CompatTab>): Promise<ExtensibleAttributeSet<CompatTab>[]> {
     const sets: ExtensibleAttributeSet<CompatTab>[] = [];
     for (const tab of tabs) {
-      const attributesDictionary = await tab.getTabValue("weeg.tabAttributes") as ExtensibleAttributeDictionary;
+      const attributesDictionary = await tab.getTabValue("weeg.tabAttributes") as ExtensibleAttributeDictionary ?? {};
       sets.push(new ExtensibleAttributeSet(tab, attributesDictionary));
     }
     return sets;
