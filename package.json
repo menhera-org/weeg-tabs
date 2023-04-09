@@ -1,6 +1,6 @@
 {
   "name": "weeg-tabs",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "WebExtensions Experts Groups tabs library",
   "main": "dist/index.js",
   "scripts": {
