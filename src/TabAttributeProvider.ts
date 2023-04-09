@@ -22,12 +22,13 @@ import { CompatTab } from "./CompatTab";
 
 export class TabAttributeProvider implements ExtensibleAttributeProvider<CompatTab> {
   public async getAttributeSets(tabs: Iterable<CompatTab>): Promise<ExtensibleAttributeSet<CompatTab>[]> {
-    const sets: ExtensibleAttributeSet<CompatTab>[] = [];
-    for (const tab of tabs) {
-      const attributesDictionary = await tab.getTabValue("weeg.tabAttributes") as ExtensibleAttributeDictionary ?? {};
-      sets.push(new ExtensibleAttributeSet(tab, attributesDictionary));
-    }
-    return sets;
+    const tabArray = Array.from(tabs);
+    return (await Promise.all([... tabs].map((tab) => {
+      return tab.getTabValue<ExtensibleAttributeDictionary>("weeg.tabAttributes");
+    }))).map((attributesDictionary, index) => {
+      const tab = tabArray[index] as CompatTab;
+      return new ExtensibleAttributeSet(tab, attributesDictionary ?? {});
+    });
   }
 
   public async saveAttributeSets(attributeSets: Iterable<ExtensibleAttributeSet<CompatTab>>): Promise<void> {

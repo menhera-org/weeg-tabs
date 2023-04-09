@@ -128,7 +128,7 @@ export class CompatTab {
       return undefined;
     }
     const value = await browser.sessions.getTabValue(this.id, key) as string | undefined;
-    if (value === undefined) {
+    if (value == undefined) {
       return undefined;
     }
     return structuredDeserialize(value) as T;
