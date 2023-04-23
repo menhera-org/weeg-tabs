@@ -22,19 +22,19 @@ import { CompatTab } from "./CompatTab";
 import { TabGroupFilter } from "./TabGroupFilter";
 
 export class CookieStoreTabGroupFilter implements TabGroupFilter {
-  public readonly cookieStoreId: string;
+  public readonly cookieStoreIds: readonly string[];
 
-  public constructor(cookieStoreId: string) {
-    this.cookieStoreId = cookieStoreId;
+  public constructor(cookieStoreId: string, ... cookieStoreIds: string[]) {
+    this.cookieStoreIds = [cookieStoreId, ...cookieStoreIds];
   }
 
   public async getTabs(): Promise<CompatTab[]> {
     return (await browser.tabs.query({
-      cookieStoreId: this.cookieStoreId,
+      cookieStoreId: [... this.cookieStoreIds],
     })).map(tab => new CompatTab(tab));
   }
 
   public async filterTabs(tabs: CompatTab[]): Promise<CompatTab[]> {
-    return tabs.filter((tab) => tab.cookieStore.id == this.cookieStoreId);
+    return tabs.filter((tab) => this.cookieStoreIds.includes(tab.cookieStore.id));
   }
 }
