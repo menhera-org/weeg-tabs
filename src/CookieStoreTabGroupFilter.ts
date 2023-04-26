@@ -24,11 +24,14 @@ import { TabGroupFilter } from "./TabGroupFilter";
 export class CookieStoreTabGroupFilter implements TabGroupFilter {
   public readonly cookieStoreIds: readonly string[];
 
-  public constructor(cookieStoreId: string, ... cookieStoreIds: string[]) {
-    this.cookieStoreIds = [cookieStoreId, ...cookieStoreIds];
+  public constructor(... cookieStoreIds: string[]) {
+    this.cookieStoreIds = cookieStoreIds;
   }
 
   public async getTabs(): Promise<CompatTab[]> {
+    if (this.cookieStoreIds.length < 1) {
+      return [];
+    }
     return (await browser.tabs.query({
       cookieStoreId: [... this.cookieStoreIds],
     })).map(tab => new CompatTab(tab));
