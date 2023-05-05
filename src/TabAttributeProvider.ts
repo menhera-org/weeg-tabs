@@ -25,12 +25,12 @@ import { TabValueService } from "./TabValueService";
 const tabValueService = TabValueService.getInstance();
 
 export class TabAttributeProvider implements ExtensibleAttributeProvider<DummyTab> {
-  public async getAttributeSets(tabs: Iterable<DummyTab>): Promise<ExtensibleAttributeSet<DummyTab>[]> {
+  public async getAttributeSets<T extends DummyTab>(tabs: Iterable<T>): Promise<ExtensibleAttributeSet<T>[]> {
     const tabArray = Array.from(tabs);
     return (await Promise.all(tabArray.map((tab) => {
       return tabValueService.getTabValue<ExtensibleAttributeDictionary>(tab.id, "weeg.tabAttributes");
     }))).map((attributesDictionary, index) => {
-      const tab = tabArray[index] as DummyTab;
+      const tab = tabArray[index] as T;
       return new ExtensibleAttributeSet(tab, attributesDictionary ?? {});
     });
   }
