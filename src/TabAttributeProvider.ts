@@ -18,22 +18,26 @@
 */
 
 import { ExtensibleAttributeDictionary, ExtensibleAttributeProvider, ExtensibleAttributeSet } from "weeg-utils";
-import { CompatTab } from "./CompatTab";
+import { DummyTab } from "./DummyTab";
 
-export class TabAttributeProvider implements ExtensibleAttributeProvider<CompatTab> {
-  public async getAttributeSets(tabs: Iterable<CompatTab>): Promise<ExtensibleAttributeSet<CompatTab>[]> {
+import { TabValueService } from "./TabValueService";
+
+const tabValueService = TabValueService.getInstance();
+
+export class TabAttributeProvider implements ExtensibleAttributeProvider<DummyTab> {
+  public async getAttributeSets(tabs: Iterable<DummyTab>): Promise<ExtensibleAttributeSet<DummyTab>[]> {
     const tabArray = Array.from(tabs);
     return (await Promise.all(tabArray.map((tab) => {
-      return tab.getTabValue<ExtensibleAttributeDictionary>("weeg.tabAttributes");
+      return tabValueService.getTabValue<ExtensibleAttributeDictionary>(tab.id, "weeg.tabAttributes");
     }))).map((attributesDictionary, index) => {
-      const tab = tabArray[index] as CompatTab;
+      const tab = tabArray[index] as DummyTab;
       return new ExtensibleAttributeSet(tab, attributesDictionary ?? {});
     });
   }
 
-  public async saveAttributeSets(attributeSets: Iterable<ExtensibleAttributeSet<CompatTab>>): Promise<void> {
+  public async saveAttributeSets(attributeSets: Iterable<ExtensibleAttributeSet<DummyTab>>): Promise<void> {
     for (const attributeSet of attributeSets) {
-      await attributeSet.target.setTabValue("weeg.tabAttributes", attributeSet.getAttributeDictionary());
+      await tabValueService.setTabValue(attributeSet.target.id, "weeg.tabAttributes", attributeSet.getAttributeDictionary());
     }
   }
 }

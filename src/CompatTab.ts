@@ -18,12 +18,14 @@
 */
 
 import browser from 'webextension-polyfill';
-import { structuredDeserialize, structuredSerialize } from 'weeg-serializer';
 import { CookieStore } from "weeg-containers";
 import { EventSink } from 'weeg-events';
 import { RegistrableDomainService } from 'weeg-domains';
 
+import { TabValueService } from './TabValueService.js';
+
 const registrableDomainService = RegistrableDomainService.getInstance<RegistrableDomainService>();
+const tabValueService = TabValueService.getInstance();
 
 export class CompatTab {
   public static readonly onCreated = new EventSink<CompatTab>();
@@ -124,28 +126,15 @@ export class CompatTab {
   }
 
   public async getTabValue<T>(key: string): Promise<T | undefined> {
-    if (!browser.sessions) {
-      return undefined;
-    }
-    const value = await browser.sessions.getTabValue(this.id, key) as string | undefined;
-    if (value == undefined) {
-      return undefined;
-    }
-    return structuredDeserialize(value) as T;
+    return tabValueService.getTabValue<T>(this.id, key);
   }
 
   public async setTabValue<T>(key: string, value: T): Promise<void> {
-    if (!browser.sessions) {
-      return;
-    }
-    await browser.sessions.setTabValue(this.id, key, structuredSerialize(value));
+    await tabValueService.setTabValue<T>(this.id, key, value);
   }
 
   public async removeTabValue(key: string): Promise<void> {
-    if (!browser.sessions) {
-      return;
-    }
-    await browser.sessions.removeTabValue(this.id, key);
+    await tabValueService.removeTabValue(this.id, key);
   }
 
   public async getRegistrableDomain(): Promise<string> {

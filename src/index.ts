@@ -17,8 +17,10 @@
   @license
 */
 
+export { DummyTab } from "./DummyTab.js";
 export { CompatTab } from "./CompatTab.js";
 export { TabAttributeProvider } from "./TabAttributeProvider.js";
+export { TabValueService } from "./TabValueService.js";
 
 export { StandardTabSorter } from "./StandardTabSorter.js";
 
